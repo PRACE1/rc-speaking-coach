@@ -416,10 +416,9 @@
 
 <div class="container">
 
-  <!-- CHROME BANNER -->
-  <div class="chrome-banner" id="chromeBanner">
-    <p>🎙 Voice recognition needs <strong>Chrome</strong>.<br>Tap below to open this app in Chrome.</p>
-    <a class="open-chrome" id="chromeLink" href="#">OPEN IN CHROME</a>
+  <!-- iOS BANNER -->
+  <div class="chrome-banner" id="iosBanner" style="background:#e8f4ff;border-color:#a0c8f0;">
+    <p style="color:#0a4a7a;">🎙 On iPhone: tap the text box below, then tap <strong>🎤 on your keyboard</strong> to dictate. Speak your pitch, then tap Analyse.</p>
   </div>
 
   <!-- MODES -->
@@ -430,8 +429,8 @@
     <div class="mode-pill" onclick="setMode(this,'technical')">⚙ Technical</div>
   </div>
 
-  <!-- RECORD -->
-  <div class="record-card">
+  <!-- RECORD (non-iOS) -->
+  <div class="record-card" id="recordCard">
     <div class="record-ring" id="recordRing" onclick="toggleRecording()">
       <button class="record-btn-inner" id="recordBtn">🎙</button>
     </div>
@@ -439,8 +438,22 @@
     <div class="timer" id="timer">0:00</div>
   </div>
 
-  <!-- TRANSCRIPT -->
-  <div class="transcript-card" id="transcriptBox">
+  <!-- iOS DICTATION INPUT -->
+  <div id="iosInputCard" style="display:none;">
+    <div class="record-card" style="padding:20px;" onclick="document.getElementById('iosDictate').focus()">
+      <div style="font-size:40px;margin-bottom:8px;">🎤</div>
+      <div style="font-size:12px;letter-spacing:2px;color:#bbb;">TAP HERE THEN USE KEYBOARD MIC</div>
+    </div>
+    <textarea id="iosDictate"
+      placeholder="Tap here → then tap 🎤 on your keyboard to speak your pitch..."
+      style="width:100%;background:#fff;border:1.5px solid #e8e8e8;border-radius:16px;padding:16px;font-size:15px;font-family:inherit;color:#333;min-height:120px;resize:none;line-height:1.6;box-shadow:0 2px 12px rgba(0,0,0,0.05);margin-bottom:4px;"
+      oninput="onIosInput(this)"
+    ></textarea>
+    <div style="font-size:11px;color:#bbb;text-align:center;margin-bottom:8px;">Speak naturally — pause when done, then tap ANALYSE</div>
+  </div>
+
+  <!-- TRANSCRIPT (non-iOS) -->
+  <div class="transcript-card" id="transcriptBox" style="display:none;">
     <span class="transcript-placeholder" id="placeholder">Your words appear here as you speak...</span>
     <span id="finalText"></span>
     <span class="interim-text" id="interimText"></span>
@@ -515,12 +528,33 @@ let apiKey = localStorage.getItem('rc_key') || '';
 let apiProvider = localStorage.getItem('rc_provider') || 'anthropic';
 if (apiKey) { document.getElementById('apiKey').value = apiKey; document.getElementById('apiProvider').value = apiProvider; }
 
-// Browser check — show Chrome banner if not Chrome
+// Device detection
+const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
 const isChrome = /Chrome/.test(navigator.userAgent) && /Google Inc/.test(navigator.vendor);
-if (!isChrome) {
-  const banner = document.getElementById('chromeBanner');
-  banner.classList.add('visible');
-  document.getElementById('chromeLink').href = 'intent://' + location.host + location.pathname + '#Intent;scheme=http;package=com.android.chrome;end';
+
+if (isIOS) {
+  // iPhone mode — use native dictation
+  document.getElementById('iosBanner').style.display = 'block';
+  document.getElementById('iosInputCard').style.display = 'block';
+  document.getElementById('recordCard').style.display = 'none';
+  document.getElementById('transcriptBox').style.display = 'none';
+} else if (!isChrome) {
+  // Non-Chrome Android — show Chrome banner
+  document.getElementById('chromeBanner').classList.add('visible');
+  document.getElementById('transcriptBox').style.display = 'block';
+} else {
+  // Chrome — show normal recorder
+  document.getElementById('transcriptBox').style.display = 'block';
+  document.getElementById('chromeBanner') && document.getElementById('chromeBanner').classList.remove('visible');
+}
+
+function onIosInput(el) {
+  finalTranscript = el.value;
+  if (el.value.trim().length > 15) {
+    document.getElementById('analyzeBtn').classList.add('visible');
+  } else {
+    document.getElementById('analyzeBtn').classList.remove('visible');
+  }
 }
 
 let recognition = null;
