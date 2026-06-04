@@ -713,9 +713,10 @@ Return this exact JSON:
       });
       const r = await res.json();
       if (r.error) throw new Error(r.error.message);
-      let raw = r.content[0].text.trim();
-      raw = raw.replace(/^```json\s*/i,'').replace(/^```\s*/i,'').replace(/\s*```$/,'');
-      data = JSON.parse(raw);
+      const raw = r.content[0].text;
+      const match = raw.match(/\{[\s\S]*\}/);
+      if (!match) throw new Error('No JSON in response');
+      data = JSON.parse(match[0]);
     } else {
       const res = await fetch('https://openrouter.ai/api/v1/chat/completions', {
         method: 'POST',
