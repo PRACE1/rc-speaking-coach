@@ -417,8 +417,8 @@
 <div class="container">
 
   <!-- iOS BANNER -->
-  <div class="chrome-banner" id="iosBanner" style="background:#e8f4ff;border-color:#a0c8f0;">
-    <p style="color:#0a4a7a;">🎙 On iPhone: tap the text box below, then tap <strong>🎤 on your keyboard</strong> to dictate. Speak your pitch, then tap Analyse.</p>
+  <div id="iosBanner" style="display:none;background:#e8f4ff;border:1.5px solid #a0c8f0;border-radius:14px;padding:14px 16px;margin-bottom:16px;font-size:13px;color:#0a4a7a;line-height:1.5;">
+    📱 <strong>iPhone detected.</strong> Use the steps below to speak your pitch using keyboard dictation.
   </div>
 
   <!-- MODES -->
@@ -438,18 +438,28 @@
     <div class="timer" id="timer">0:00</div>
   </div>
 
-  <!-- iOS DICTATION INPUT -->
+  <!-- iOS INPUT -->
   <div id="iosInputCard" style="display:none;">
-    <div class="record-card" style="padding:20px;" onclick="document.getElementById('iosDictate').focus()">
-      <div style="font-size:40px;margin-bottom:8px;">🎤</div>
-      <div style="font-size:12px;letter-spacing:2px;color:#bbb;">TAP HERE THEN USE KEYBOARD MIC</div>
+    <div style="background:#fff;border-radius:20px;padding:20px;box-shadow:0 2px 16px rgba(0,0,0,0.06);margin-bottom:16px;">
+      <div style="font-size:13px;color:#c9952a;font-weight:700;letter-spacing:1px;margin-bottom:12px;">HOW TO SPEAK YOUR PITCH</div>
+      <div style="display:flex;align-items:flex-start;gap:12px;margin-bottom:10px;">
+        <div style="background:#c9952a;color:#fff;border-radius:50%;width:24px;height:24px;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0;">1</div>
+        <div style="font-size:14px;color:#444;line-height:1.5;">Tap the text box below — your keyboard appears</div>
+      </div>
+      <div style="display:flex;align-items:flex-start;gap:12px;margin-bottom:10px;">
+        <div style="background:#c9952a;color:#fff;border-radius:50%;width:24px;height:24px;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0;">2</div>
+        <div style="font-size:14px;color:#444;line-height:1.5;">Find the <strong>🎤 microphone key</strong> on your keyboard (bottom row, near the space bar) and tap it</div>
+      </div>
+      <div style="display:flex;align-items:flex-start;gap:12px;">
+        <div style="background:#c9952a;color:#fff;border-radius:50%;width:24px;height:24px;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;flex-shrink:0;">3</div>
+        <div style="font-size:14px;color:#444;line-height:1.5;">Speak your pitch — tap ANALYSE when done</div>
+      </div>
     </div>
     <textarea id="iosDictate"
-      placeholder="Tap here → then tap 🎤 on your keyboard to speak your pitch..."
-      style="width:100%;background:#fff;border:1.5px solid #e8e8e8;border-radius:16px;padding:16px;font-size:15px;font-family:inherit;color:#333;min-height:120px;resize:none;line-height:1.6;box-shadow:0 2px 12px rgba(0,0,0,0.05);margin-bottom:4px;"
+      placeholder="👆 Tap here first, then use the 🎤 on your keyboard..."
+      style="width:100%;background:#fff;border:2px solid #c9952a;border-radius:16px;padding:16px;font-size:15px;font-family:inherit;color:#333;min-height:140px;resize:none;line-height:1.6;box-shadow:0 2px 12px rgba(201,149,42,0.1);margin-bottom:8px;display:block;"
       oninput="onIosInput(this)"
     ></textarea>
-    <div style="font-size:11px;color:#bbb;text-align:center;margin-bottom:8px;">Speak naturally — pause when done, then tap ANALYSE</div>
   </div>
 
   <!-- TRANSCRIPT (non-iOS) -->
@@ -533,7 +543,6 @@ const isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream;
 const isChrome = /Chrome/.test(navigator.userAgent) && /Google Inc/.test(navigator.vendor);
 
 if (isIOS) {
-  // iPhone mode — use native dictation
   document.getElementById('iosBanner').style.display = 'block';
   document.getElementById('iosInputCard').style.display = 'block';
   document.getElementById('recordCard').style.display = 'none';
